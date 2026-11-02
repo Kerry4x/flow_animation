@@ -9,6 +9,7 @@ Usage:
     python3 vector_animator.py                      # 24 frames -> frames/gym_vector/
     python3 vector_animator.py --preview            # also writes preview.mp4 (needs ffmpeg)
     python3 vector_animator.py --x 700 --y 745 --scale 1.2   # move / resize the figure
+    python3 vector_animator.py --background references/05_gym_simple.jpg   # original busy gym
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_BG = ROOT / "references" / "05_gym_simple.jpg"
+DEFAULT_BG = ROOT / "references" / "empty_gym.png"      # made by clean_background.py
 DEFAULT_OUT = ROOT / "frames" / "gym_vector"
 
 SS = 4  # supersampling factor for smooth (anti-aliased) lines
@@ -183,9 +184,9 @@ def main() -> int:
     ap.add_argument("--background", default=str(DEFAULT_BG))
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--frames", type=int, default=24)
-    ap.add_argument("--x", type=float, default=1052, help="feet position, x (background pixels)")
-    ap.add_argument("--y", type=float, default=748, help="feet position, y (background pixels)")
-    ap.add_argument("--scale", type=float, default=1.0)
+    ap.add_argument("--x", type=float, default=1195, help="feet position, x (background pixels)")
+    ap.add_argument("--y", type=float, default=700, help="feet position, y (background pixels)")
+    ap.add_argument("--scale", type=float, default=1.1)
     ap.add_argument("--flip", action="store_true", help="curl with the other arm")
     ap.add_argument("--fps", type=int, default=12)
     ap.add_argument("--preview", action="store_true", help="also write preview.mp4 with ffmpeg")
