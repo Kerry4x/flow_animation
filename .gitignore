@@ -1,2 +1,4 @@
 __pycache__/
 *.pyc
+flow_animation_pipeline/logs/*.jsonl
+flow_animation_pipeline/logs/rejected/
