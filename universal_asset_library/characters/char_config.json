@@ -1,0 +1,31 @@
+{
+  "_about": "Metadata for one character sheet. All coordinates are pixels in the sheet image, measured from its top-left corner. Copy this file for each new character and update the numbers.",
+  "char_01_lead": {
+    "sheet": "char_01_lead.png",
+    "sheet_size": [1438, 2576],
+    "views": {
+      "three_quarter": {
+        "box": [400, 398, 740, 1378],
+        "_box": "left, top, right, bottom of the whole figure, head to feet",
+        "head": {"centre": [556.5, 550.5], "radius": 143},
+        "feet_y": 1368,
+        "centre_x": 560,
+        "front_arm": {
+          "elbow": [602, 870],
+          "hand_end": [657, 1026],
+          "half_width": 22,
+          "_half_width": "half the stroke width plus anti-aliasing, in pixels"
+        }
+      }
+    },
+    "expressions": {
+      "_about": "Box around each expression head. Keep labels out of the box; stray bits are dropped automatically.",
+      "midnight_inspiration": [60, 1540, 480, 1955],
+      "eager_speaking": [480, 1540, 900, 1955],
+      "deflated_slump": [900, 1540, 1400, 1955],
+      "guilty_glance": [60, 2060, 480, 2470],
+      "nervous": [480, 2060, 900, 2470],
+      "determined": [900, 2060, 1400, 2470]
+    }
+  }
+}

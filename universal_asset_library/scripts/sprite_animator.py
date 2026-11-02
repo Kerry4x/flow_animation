@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Sprite-sheet pipeline: animate CHAR_01 doing a dumbbell curl over the locked gym background.
 
-Inputs (never modified):
-  references/perfect_gym.png   background, used as-is for every frame
-  references/char_01_lead.png  character turnaround + expression sheet
+Inputs (never modified), all in universal_asset_library/:
+  backgrounds/perfect_gym.png       background, used as-is for every frame
+  characters/char_01_lead.png       character turnaround + expression sheet
+  characters/char_config.json       where the body, arm and heads sit on that sheet
 
 What it does:
   1. Cuts sprites out of the sheet: the 3/4-view body and the expression heads.
@@ -20,14 +21,15 @@ What it does:
      untouched background. Writes PNG frames and preview.mp4.
 
 Usage:
-    python3 sprite_animator.py                   # frames/gym_sprite/frame_001..024.png + preview.mp4
+    python3 sprite_animator.py                   # flow_animation_pipeline/frames/gym_sprite/ + preview.mp4
     python3 sprite_animator.py --x 1250 --y 1270 --scale 0.62
-    python3 sprite_animator.py --debug-sprites   # also saves the cut-out sprites to logs/sprites/
+    python3 sprite_animator.py --debug-sprites   # also saves the cut-out sprites to flow_animation_pipeline/logs/sprites/
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import shutil
 import subprocess
@@ -37,30 +39,27 @@ import cv2
 import numpy as np
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parent
-BG_PATH = ROOT / "references" / "perfect_gym.png"
-SHEET_PATH = ROOT / "references" / "char_01_lead.png"
-OUT_DIR = ROOT / "frames" / "gym_sprite"
-SPRITE_DEBUG = ROOT / "logs" / "sprites"
+LIBRARY = Path(__file__).resolve().parent.parent          # universal_asset_library/
+WORKSPACE = LIBRARY.parent
+BG_PATH = LIBRARY / "backgrounds" / "perfect_gym.png"
+CHAR_CONFIG = LIBRARY / "characters" / "char_config.json"
+CHARACTER = "char_01_lead"
+OUT_DIR = WORKSPACE / "flow_animation_pipeline" / "frames" / "gym_sprite"
+SPRITE_DEBUG = WORKSPACE / "flow_animation_pipeline" / "logs" / "sprites"
 
 # --------------------------------------------------------------------------- sheet layout
-# Pixel coordinates in char_01_lead.png (1438 x 2576).
-BODY_BOX = (400, 398, 740, 1378)          # 3/4 view, head to feet
-BODY_HEAD = (556.5, 550.5, 143)           # centre x, centre y, outer radius of its head
-BODY_FEET_Y = 1368                        # bottom of the feet (anchor point)
-BODY_CENTRE_X = 560
-ELBOW = (602, 870)                        # front arm: elbow joint
-HAND_END = (657, 1026)                    # front arm: end of the hand
-ARM_HALF_WIDTH = 22                       # half the stroke width plus anti-aliasing
-
-EXPRESSION_BOXES = {                      # cells of the expression grid (heads only, no labels)
-    "midnight_inspiration": (60, 1540, 480, 1955),
-    "eager_speaking": (480, 1540, 900, 1955),
-    "deflated_slump": (900, 1540, 1400, 1955),
-    "guilty_glance": (60, 2060, 480, 2470),
-    "nervous": (480, 2060, 900, 2470),
-    "determined": (900, 2060, 1400, 2470),
-}
+# Read from characters/char_config.json (pixel coordinates in the character sheet).
+_cfg = json.loads(CHAR_CONFIG.read_text())[CHARACTER]
+_view = _cfg["views"]["three_quarter"]
+SHEET_PATH = LIBRARY / "characters" / _cfg["sheet"]
+BODY_BOX = tuple(_view["box"])                              # 3/4 view, head to feet
+BODY_HEAD = (*_view["head"]["centre"], _view["head"]["radius"])
+BODY_FEET_Y = _view["feet_y"]                               # bottom of the feet (anchor point)
+BODY_CENTRE_X = _view["centre_x"]
+ELBOW = tuple(_view["front_arm"]["elbow"])                  # front arm: elbow joint
+HAND_END = tuple(_view["front_arm"]["hand_end"])            # front arm: end of the hand
+ARM_HALF_WIDTH = _view["front_arm"]["half_width"]
+EXPRESSION_BOXES = {k: tuple(v) for k, v in _cfg["expressions"].items() if not k.startswith("_")}
 
 # Dumbbell lying on the gym floor in perfect_gym.png (2576 x 1438): two plates and a bar.
 DUMBBELL_BOX = (2008, 994, 2136, 1078)
