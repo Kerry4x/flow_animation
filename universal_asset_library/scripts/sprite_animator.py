@@ -2,9 +2,9 @@
 """Sprite-sheet pipeline: animate CHAR_01 doing a dumbbell curl over the locked gym background.
 
 Inputs (never modified), all in universal_asset_library/:
-  backgrounds/perfect_gym.png       background, used as-is for every frame
-  characters/char_01_lead.png       character turnaround + expression sheet
-  characters/char_config.json       where the body, arm and heads sit on that sheet
+  1_stages/indoor_rooms/perfect_gym.png       background, used as-is for every frame
+  2_puppets/base_bodies/char_01_lead.png      character turnaround + expression sheet
+  2_puppets/base_bodies/char_config.json      where the body, arm and heads sit on that sheet
 
 What it does:
   1. Cuts sprites out of the sheet: the 3/4-view body and the expression heads.
@@ -41,17 +41,18 @@ from PIL import Image
 
 LIBRARY = Path(__file__).resolve().parent.parent          # universal_asset_library/
 WORKSPACE = LIBRARY.parent
-BG_PATH = LIBRARY / "backgrounds" / "perfect_gym.png"
-CHAR_CONFIG = LIBRARY / "characters" / "char_config.json"
+BG_PATH = LIBRARY / "1_stages" / "indoor_rooms" / "perfect_gym.png"
+PUPPET_DIR = LIBRARY / "2_puppets" / "base_bodies"
+CHAR_CONFIG = PUPPET_DIR / "char_config.json"
 CHARACTER = "char_01_lead"
 OUT_DIR = WORKSPACE / "flow_animation_pipeline" / "frames" / "gym_sprite"
 SPRITE_DEBUG = WORKSPACE / "flow_animation_pipeline" / "logs" / "sprites"
 
 # --------------------------------------------------------------------------- sheet layout
-# Read from characters/char_config.json (pixel coordinates in the character sheet).
+# Read from 2_puppets/base_bodies/char_config.json (pixel coordinates in the character sheet).
 _cfg = json.loads(CHAR_CONFIG.read_text())[CHARACTER]
 _view = _cfg["views"]["three_quarter"]
-SHEET_PATH = LIBRARY / "characters" / _cfg["sheet"]
+SHEET_PATH = PUPPET_DIR / _cfg["sheet"]
 BODY_BOX = tuple(_view["box"])                              # 3/4 view, head to feet
 BODY_HEAD = (*_view["head"]["centre"], _view["head"]["radius"])
 BODY_FEET_Y = _view["feet_y"]                               # bottom of the feet (anchor point)
