@@ -39,7 +39,7 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_REFERENCE = ROOT / "references" / "05_gym_simple.jpg"
 DEFAULT_OUT = ROOT / "frames" / "gym_lift"
 LOG_DIR = ROOT / "logs"
-DEFAULT_MODEL = "gemini-2.5-flash-image"
+DEFAULT_MODEL = "gemini-3.1-flash-lite-image"   # or gemini-3.1-flash-image; override with --model or GEMINI_IMAGE_MODEL
 
 # Retry ladder: attempt 0 is the normal try; attempts 1-3 are the retries.
 STRENGTH_LEVELS = [
